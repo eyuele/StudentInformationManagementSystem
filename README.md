@@ -8,7 +8,7 @@ Developed as a group project for a Data Structures and Algorithms course.
 
 ---
 
-## ✅ Completed Features (by the author)
+## ✅ Completed Features 
 
 | Data Structure      | Operations                                                                 |
 |---------------------|----------------------------------------------------------------------------|
