@@ -1,4 +1,5 @@
-#pragma once
+#include <ios>
+#include <ostream>
 #if defined(_WIN32) || defined(_WIN64)
     #define CLEAR_COMMAND "cls"
 #else
@@ -9,14 +10,12 @@
 #include <string>
 #include <limits>
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include <cctype>
 #include <cstdlib>
+#include <algorithm>
 
-
-
-
-const std::unordered_map<int, std::string> majorMap = {
+const std::map<int, std::string> majorMap = {
         {1, "Computer Science"},
         {2, "Business"},
         {3, "Management"},
@@ -32,6 +31,12 @@ struct Student {
     std::string name = "";
     std::string major = "";
 };
+// Singly Linked List Data Structure 
+// Node structure for singly linked list
+struct Slist_Node {
+    Student data;
+    Slist_Node* next;
+};
 // Doubly Linked List Data Structure
 struct Dllist_Node {
     Student data;
@@ -44,12 +49,20 @@ struct Tree_Node {
     Tree_Node* left;
     Tree_Node* right;
 };
+// Queue Node Structure
+struct QueueNode {
+    Student data;
+    QueueNode* next;
+    QueueNode(const Student& student) : data(student), next(nullptr) {}
+};
 
+// Global queue variables (defined once here)
+static QueueNode* queueFront = nullptr;
+static QueueNode* queueRear = nullptr;
+static int queueCount = 0;
 
 // Student Info Insert Function Decalaration 
 Student studentInfo(Student& student, std::vector <int>& ID_REGISTER);
-
-
 
 // Doubly Linked List Funcition Declaration
 Dllist_Node* createNode(const Student& student);
@@ -65,23 +78,36 @@ void Dllist_clear(Dllist_Node* &head, std::vector <int>& ID_REGISTER);
 // Single Linked List Function Declaration
 // Put Your Code Here
 
-
-
-
+Slist_Node* createSNode(const Student& s);
+void displaySingly(Slist_Node* head);
+void bubbleSortSingly(Slist_Node* head);
+void insertIntoSingly(Slist_Node*& head, std::vector <int> &ID_REGISTER);
+void deleteFromSingly(Slist_Node*& head, std::vector <int>& ID_REGISTER);
+void searchSingly(Slist_Node* head);
+void insertionSortSingly(Slist_Node*& head);
+void freeSinglyList(Slist_Node*& head, std::vector <int> &ID_REGISTER);
 
 // Stack Function Declaration 
 // Put Your Code Here
-
-
-
-
+void pushStudent(std::vector<int>& ID_REGISTER, std::vector<Student>& stack);
+void popStudent(std::vector<int>& ID_REGISTER, std::vector<Student>& stack);
+void peekStack(std::vector<Student>& stack);
+void displayStack(std::vector<Student>& stack);
+void searchStack(std::vector<Student>& stack);
+void bubbleSortStack(std::vector<Student>& stack);
+void insertionSortStack(std::vector<Student>& stack);
+void selectionSortStack(std::vector<Student>& stack);
+void mergeSortStack(std::vector<Student>& stack);
+void quickSortStack(std::vector<Student>& stack);
 
 // Queue Function Declaration
 // Put Your Code Here   
-
-
-
-
+void queueEnqueue(std::vector<int>& ID_REGISTER);
+void queueDequeue(std::vector<int>& ID_REGISTER);
+void queuePeek();
+void queueDisplay();
+void queueSort();
+void queueClear(std::vector<int>& ID_REGISTER);
 
 // Tree Function Declaration
 // Put Your Code Here
@@ -95,36 +121,29 @@ void Tree_Traverse(Tree_Node* head);
 void clearRec(Tree_Node* node);
 void Tree_Clear(Tree_Node* &head, std::vector <int>& ID_REGISTER);
 
-
-
-
 // Menu Function Declarations 
-void slinkedlistMenu(std::vector <int>& ID_REGISTER);
+void slinkedlistMenu(Slist_Node* &Slist_head, std::vector <int>& ID_REGISTER);
 void DlinkedlistMenu(Dllist_Node* &head, std::vector <int>& ID_REGISTER);
-void stackMenu(std::vector <int>& ID_REGISTER);
+void stackMenu(std::vector <int>& ID_REGISTER, std::vector<Student>& stack);
 void queueMenu(std::vector <int>& ID_REGISTER);
 void treeMenu(Tree_Node* &Tlist_head, std::vector <int>& ID_REGISTER);
-void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tlist_head, std::vector <int>& SLLIST_ID_REGISTER,
+void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tlist_head, std::vector<Student>& stack, Slist_Node* &Slist_head, std::vector <int>& SLLIST_ID_REGISTER,
             std::vector <int>& DLLIST_ID_REGISTER, std::vector <int>& STACK_ID_REGISTER,
             std::vector <int>& QUEUE_ID_REGISTER, std::vector <int>& TREE_ID_REGISTER);
 
-
-
-
 int main() {
     Dllist_Node* Dllist_head = nullptr;
+    Slist_Node* Slist_head = nullptr;
     Tree_Node* Tree_head = nullptr;
     std::vector <int> SLLIST_ID_REGISTER;
     std::vector <int> DLLIST_ID_REGISTER;
     std::vector <int> STACK_ID_REGISTER;
     std::vector <int> QUEUE_ID_REGISTER;
     std::vector <int> TREE_ID_REGISTER;
-    
-    mainMenu(Dllist_head, Tree_head, SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER);
+    std::vector<Student> stack;
+    mainMenu(Dllist_head, Tree_head, stack, Slist_head, SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER);
     return 0;
 }
-
-
 
 // Menu Function Implementations
 void DlinkedlistMenu(Dllist_Node* &Dllist_head, std::vector <int>& ID_REGISTER) {
@@ -148,6 +167,7 @@ void DlinkedlistMenu(Dllist_Node* &Dllist_head, std::vector <int>& ID_REGISTER) 
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a number between 1 and 6." << std::endl;
+            std::cin.get(); 
             continue;
         }
         switch (choice) {
@@ -172,10 +192,11 @@ void DlinkedlistMenu(Dllist_Node* &Dllist_head, std::vector <int>& ID_REGISTER) 
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
         }
-        
+        std::cin.get(); 
     }
 }
-void slinkedlistMenu(std::vector <int>& ID_REGISTER) {
+
+void slinkedlistMenu(Slist_Node* &Slist_head, std::vector <int>& ID_REGISTER) {
     while (true) {
         system(CLEAR_COMMAND);
         std::cout << "---------------------------------------" << std::endl;
@@ -184,9 +205,10 @@ void slinkedlistMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "1. Insert Student Record at Beginning" << std::endl;
         std::cout << "2. Delete Student Record" << std::endl;
         std::cout << "3. Search Student Record" << std::endl;
-        std::cout << "4. Display All Records" << std::endl;\
-        std::cout << "5. Sort Records by ID" << std::endl;
-        std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "4. Display All Records" << std::endl;
+        std::cout << "5. Bubble Sort" << std::endl;
+        std::cout << "6. Insertion Sort" << std::endl;
+        std::cout << "7. Return to Main Menu" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
@@ -195,37 +217,40 @@ void slinkedlistMenu(std::vector <int>& ID_REGISTER) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number between 1 and 6." << std::endl;
+            std::cout << "Invalid input. Please enter a number between 1 and 7." << std::endl;
+            std::cin.get(); 
             continue;
         }
         switch (choice) {
             case 1:
-                std::cout << "You selected Insert Student Record at Beginning." << std::endl;
+                insertIntoSingly(Slist_head, ID_REGISTER);
                 break;
-            case 2:
-                std::cout << "You selected Delete Student Record." << std::endl;
+            case 2: 
+                deleteFromSingly(Slist_head, ID_REGISTER);
                 break;
-            case 3: 
-                std::cout << "You selected Search Student Record." << std::endl;
+            case 3:
+                searchSingly(Slist_head);
                 break;
             case 4:
-                std::cout << "You selected Display All Records." << std::endl;
+                displaySingly(Slist_head);
                 break;
             case 5:
-                std::cout << "You selected Sort Records by ID." << std::endl;
+                bubbleSortSingly(Slist_head);
                 break;
             case 6:
-                std::cout << "Returning to Main Menu." << std::endl;
+                insertionSortSingly(Slist_head); 
+                break;
+            case 7:
+                std::cout << "Go Back To Main Menu" << std::endl;
                 return;
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
         }
-        
+        std::cin.get(); 
     }
 }
-void stackMenu(std::vector <int>& ID_REGISTER) {
+void stackMenu(std::vector <int>& ID_REGISTER, std::vector<Student>& stack) {
     while (true) {
-        
         system(CLEAR_COMMAND);
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "Stack Operations:" << std::endl;
@@ -234,42 +259,72 @@ void stackMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "2. Pop Student Record" << std::endl;
         std::cout << "3. Peek Top Student Record" << std::endl;
         std::cout << "4. Display All Records" << std::endl;
-        std::cout << "5. Sort Records by ID" << std::endl;
-        std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "5. Search Student by ID" << std::endl;
+        std::cout << "6. Sort Stack" << std::endl;
+        std::cout << "7. Return to Main Menu" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number between 1 and 6." << std::endl;
+            std::cout << "Invalid input. Press Enter to continue...";
+            std::cin.get();
             continue;
         }
+
         switch (choice) {
             case 1:
-                std::cout << "You selected Push Student Record." << std::endl;
+                pushStudent(ID_REGISTER, stack);
                 break;
             case 2:
-                std::cout << "You selected Pop Student Record." << std::endl;
+                popStudent(ID_REGISTER, stack);
                 break;
             case 3:
-                std::cout << "You selected Peek Top Student Record." << std::endl;
+                peekStack(stack);
                 break;
             case 4:
-                std::cout << "You selected Display All Records." << std::endl;
+                displayStack(stack);
                 break;
             case 5:
-                std::cout << "You selected Sort Records by ID." << std::endl;
+                searchStack(stack);
                 break;
-            case 6:
+            case 6: {
+                // Sorting submenu
+                system(CLEAR_COMMAND);
+                std::cout << "--- Sorting Algorithms ---" << std::endl;
+                std::cout << "1. Bubble sort (by name)" << std::endl;
+                std::cout << "2. Insertion sort (by GPA)" << std::endl;
+                std::cout << "3. Selection sort (by ID)" << std::endl;
+                std::cout << "4. Merge sort (by name)" << std::endl;
+                std::cout << "5. Quick sort (by GPA)" << std::endl;
+                std::cout << "Enter choice: ";
+                int sortChoice;
+                std::cin >> sortChoice;
+                std::cin.ignore();
+                switch (sortChoice) {
+                    case 1: bubbleSortStack(stack); break;
+                    case 2: insertionSortStack(stack); break;
+                    case 3: selectionSortStack(stack); break;
+                    case 4: mergeSortStack(stack); break;
+                    case 5: quickSortStack(stack); break;
+                    default: std::cout << "Invalid choice.\n";
+                }
+                std::cout << "Press Enter to continue...";
+                std::cin.get();
+                break;
+            }
+            case 7:
                 std::cout << "Returning to Main Menu." << std::endl;
                 return;
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
+                std::cout << "Press Enter to continue...";
+                std::cin.get();
         }
-        
     }
 }
 void treeMenu(Tree_Node* &Tree_head, std::vector <int>& ID_REGISTER) {
@@ -292,6 +347,7 @@ void treeMenu(Tree_Node* &Tree_head, std::vector <int>& ID_REGISTER) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a number between 1 and 6." << std::endl;
+            std::cin.get();
             continue;
         }
         switch (choice) {
@@ -313,6 +369,7 @@ void treeMenu(Tree_Node* &Tree_head, std::vector <int>& ID_REGISTER) {
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
         }
+        std::cin.get();
     }
 }
 void queueMenu(std::vector <int>& ID_REGISTER) {
@@ -336,23 +393,24 @@ void queueMenu(std::vector <int>& ID_REGISTER) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a number between 1 and 6." << std::endl;
+            std::cin.get();
             continue;
         }
         switch (choice) {
             case 1:
-                std::cout << "You selected Enqueue Student Record." << std::endl;
+                queueEnqueue(ID_REGISTER);
                 break;
             case 2:
-                std::cout << "You selected Dequeue Student Record." << std::endl;
+                queueDequeue(ID_REGISTER);
                 break;
             case 3:
-                std::cout << "You selected Peek Front Student Record." << std::endl;
+                queuePeek();
                 break;
             case 4:
-                std::cout << "You selected Display All Records." << std::endl;
+                queueDisplay();
                 break;
             case 5:
-                std::cout << "You selected Sort Records by ID." << std::endl;
+                queueSort();
                 break;
             case 6:
                 std::cout << "Returning to Main Menu." << std::endl;
@@ -360,10 +418,11 @@ void queueMenu(std::vector <int>& ID_REGISTER) {
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
         }
-        
+        std::cin.get();
     }
 }
-void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tree_head, std::vector <int>& SLLIST_ID_REGISTER,
+void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tree_head, std::vector<Student>& stack, 
+            Slist_Node* &Slist_head, std::vector <int>& SLLIST_ID_REGISTER,
             std::vector <int>& DLLIST_ID_REGISTER, std::vector <int>& STACK_ID_REGISTER,
             std::vector <int>& QUEUE_ID_REGISTER, std::vector <int>& TREE_ID_REGISTER) {
     while (true) {
@@ -392,13 +451,13 @@ void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tree_head, std::vector <int
         }
         switch (choice) {
             case 1:
-                slinkedlistMenu(SLLIST_ID_REGISTER);
+                slinkedlistMenu(Slist_head, SLLIST_ID_REGISTER);
                 break;
             case 2:
                 DlinkedlistMenu(Dllist_head, DLLIST_ID_REGISTER);
                 break;
             case 3:
-                stackMenu(STACK_ID_REGISTER);
+                stackMenu(STACK_ID_REGISTER, stack);
                 break;
             case 4:
                 queueMenu(QUEUE_ID_REGISTER);
@@ -410,11 +469,14 @@ void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tree_head, std::vector <int
                 std::cout << "Exiting program. Goodbye!" << std::endl;
                 Dllist_clear(Dllist_head, DLLIST_ID_REGISTER);
                 Tree_Clear(Tree_head, TREE_ID_REGISTER);
+                freeSinglyList(Slist_head, SLLIST_ID_REGISTER);
+                queueClear(QUEUE_ID_REGISTER);
                 exit(0);
                 break;
             default:
                 std::cout << "Invalid choice. Please select a valid option." << std::endl;
         }
+        std::cin.get();
     }
 }
 
@@ -479,6 +541,9 @@ Student studentInfo(Student& student, std::vector <int>& ID_REGISTER) {
         }
         while (true) {
             int choice;
+            for (auto it = majorMap.begin(); it != majorMap.end(); ++it) {
+                std::cout << it->first << " : " << it->second << "\n";
+            }
             std::cout << "Enter Student Major (1-4): ";
             std::cin >> choice;  
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');     
@@ -636,6 +701,7 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
                         ID_REGISTER.erase(ID_REGISTER.begin() + i);
                     }
                 }
+                std::cout << "------------------------------" << std::endl;
                 std::cout << "Press Enter to continue...";
                 std::cin.get(); 
                 return;
@@ -874,30 +940,566 @@ void Dllist_clear(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
     }
 }
 
-
-
 // Single Linked List Function Implementations
 // Put Your Code Here
+Slist_Node* createSNode(const Student& s) {
+    Slist_Node* newNode = new Slist_Node;
+    newNode->data = s;
+    newNode->next = nullptr;
+    return newNode;
+}
+void displaySingly(Slist_Node* head) {
+    if (head == nullptr) {
+        std::cout << "\n--- No student records found. ---\n";
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
 
-
-
-
-
+        return;
+    }
+    std::cout << "\n--- Student Records (Singly Linked List) ---\n";
+    Slist_Node* current = head;
+    int count = 1;
+    while (current != nullptr) {
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Student Information" << std::endl;
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Name: " << current->data.name << std::endl;
+        std::cout << "Age: " << current->data.age << std::endl;
+        std::cout << "Student ID: " << std::to_string(current->data.id) << std::endl;
+        std::cout << "Major: " << current->data.major << std::endl;
+        std::cout << "Registration year: " << current->data.year << std::endl;
+        std::cout << "GPA: " << current->data.gpa << std::endl;
+        current = current->next;
+        
+    }
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void insertIntoSingly(Slist_Node*& head, std::vector <int> &ID_REGISTER) {
+    Student s;
+    s = studentInfo(s, ID_REGISTER);
+    Slist_Node* newNode = createSNode(s);
+    if (head == nullptr) {
+        head = newNode;
+        ID_REGISTER.push_back(head->data.id);
+    } 
+    else {
+        Slist_Node* temp = head;
+        while (temp->next != nullptr) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        ID_REGISTER.push_back(temp->next->data.id);
+    }
+    // Sort after every insertion (required by assignment)
+    bubbleSortSingly(head);
+    std::cout << "List automatically sorted by ID after insertion.\n";
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void deleteFromSingly(Slist_Node*& head, std::vector <int>& ID_REGISTER) {
+    if (head == nullptr) {
+        std::cout << "List is empty. Nothing to delete.\n";
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }  
+    int id;
+    std::cout << "Enter Student ID to delete: ";
+    std::cin >> id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid ID.\n";
+        return;
+    }
+    Slist_Node* current = head;
+    Slist_Node* previous = nullptr;
+    while (current != nullptr && current->data.id != id) {
+        previous = current;
+        current = current->next;
+    }
+    if (current == nullptr) {
+        std::cout << "Student with ID " << id << " not found.\n";
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    // Remove the node
+    if (previous == nullptr) {
+        head = current->next;
+    } else {
+        previous->next = current->next;
+    }
+    delete current;
+    for (int i = 0; i < ID_REGISTER.size(); i++){
+        if (ID_REGISTER[i] == id ) {
+            ID_REGISTER.erase(ID_REGISTER.begin() + i);
+        }
+    }
+    std::cout << "Student ID " << id << " deleted successfully.\n";
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void searchSingly(Slist_Node* head) {
+    if (head == nullptr) {
+        std::cout << "List is empty. No students to search.\n";
+        return;
+    }
+    int id;
+    std::cout << "Enter Student ID to search: ";
+    std::cin >> id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid ID.\n";
+        return;
+    }
+    Slist_Node* current = head;
+    while (current != nullptr && current->data.id != id) {
+        current = current->next;
+    }
+    if (current != nullptr) {
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Student Information" << std::endl;
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Name: " << current->data.name << std::endl;
+        std::cout << "Age: " << current->data.age << std::endl;
+        std::cout << "Student ID: " << std::to_string(current->data.id) << std::endl;
+        std::cout << "Major: " << current->data.major << std::endl;
+        std::cout << "Registration year: " << current->data.year << std::endl;
+        std::cout << "GPA: " << current->data.gpa << std::endl;
+    } 
+    else {
+        std::cout << "Student with ID " << id << " not found.\n";
+    }
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void bubbleSortSingly(Slist_Node* head) {
+    if (head == nullptr || head->next == nullptr) {
+        std::cout << "List too small to sort (need at least 2 nodes).\n";
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    bool swapped;
+    do {
+        swapped = false;
+        Slist_Node* current = head;
+        while (current->next != nullptr) {
+            if (current->data.id > current->next->data.id) {
+                // Swap the data between nodes
+                Student temp = current->data;
+                current->data = current->next->data;
+                current->next->data = temp;
+                swapped = true;
+            }
+            current = current->next;
+        }
+    } while (swapped);
+    std::cout << "Bubble sort completed.\n";
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void insertionSortSingly(Slist_Node*& head) {
+    if (head == nullptr || head->next == nullptr) {
+        std::cout << "List too small to sort (need at least 2 nodes).\n";
+        return;
+    }
+        Slist_Node* sorted = nullptr;
+    Slist_Node* current = head;
+        while (current != nullptr) {
+            Slist_Node* nextNode = current->next;
+            // Insert current into the sorted list
+            if (sorted == nullptr || sorted->data.id >= current->data.id) {
+                current->next = sorted;
+                sorted = current;
+            } else {
+                Slist_Node* temp = sorted;
+                while (temp->next != nullptr && temp->next->data.id < current->data.id) {
+                    temp = temp->next;
+                }
+                current->next = temp->next;
+                temp->next = current;
+            }
+            current = nextNode;
+        }
+        head = sorted;
+        std::cout << "Insertion sort completed.\n";
+        std::cout << "-----------------------------" << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+}
+void freeSinglyList(Slist_Node*& head, std::vector <int> &ID_REGISTER) {
+    while (head != nullptr) {
+        Slist_Node* temp = head;
+        head = head->next;
+        delete temp;
+        ID_REGISTER.clear();
+    }
+}
 
 // Stack Function Implementations 
 // Put Your Code Here
+void pushStudent(std::vector<int>& ID_REGISTER, std::vector<Student>& stack) {
+    Student newStudent;
+    newStudent = studentInfo(newStudent, ID_REGISTER);
+    stack.push_back(newStudent);
+    ID_REGISTER.push_back(newStudent.id);
+    std::cout << "\nStudent pushed onto stack.\n";
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void popStudent(std::vector<int>& ID_REGISTER, std::vector<Student>& stack) {
+    if (stack.empty()) {
+        std::cout << "Stack is empty.\n";
+        std::cout << "Press Enter...";
+        std::cin.get();
+        return;
+    }
+    // Remove ID from register
+    int id = stack.back().id;
+    for (size_t i = 0; i < ID_REGISTER.size(); ++i) {
+        if (ID_REGISTER[i] == id) {
+            ID_REGISTER.erase(ID_REGISTER.begin() + i);
+            break;
+        }
+    }
+    std::cout << "Popped: " << stack.back().name << " (ID: " << id << ")\n";
+    stack.pop_back();
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void peekStack(std::vector<Student>& stack) {
+    if (stack.empty()) {
+        std::cout << "Stack is empty.\n";
+    } else {
+        std::cout << "Top Student:\n";
+        std::cout << "ID: " << stack.back().id
+                  << " | Name: " << stack.back().name
+                  << " | Age: " << stack.back().age
+                  << " | Major: " << stack.back().major
+                  << " | GPA: " << stack.back().gpa << "\n";
+    }
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void displayStack(std::vector<Student>& stack) {
+    if (stack.empty()) {
+        std::cout << "Stack is empty.\n";
+        std::cout << "Press Enter...";
+        std::cin.get();
+        return;
+    }
+    std::cout << "\n--- Stack (top to bottom) ---\n";
+    // iterate from last element to first
+    for (int i = stack.size() - 1; i >= 0; --i) {
+        std::cout << "ID: " << stack[i].id
+                  << " | Name: " << stack[i].name
+                  << " | Age: " << stack[i].age
+                  << " | Major: " << stack[i].major
+                  << " | GPA: " << stack[i].gpa << "\n";
+    }
+    std::cout << "-------------------------------\n";
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void searchStack(std::vector<Student>& stack) {
+    if (stack.empty()) {
+        std::cout << "Stack is empty.\n";
+        std::cout << "Press Enter...";
+        std::cin.get();
+        return;
+    }
+    int id;
+    std::cout << "Enter Student ID to search: ";
+    std::cin >> id;
+    std::cin.ignore();
+    // search from top (end) to bottom (beginning)
+    for (int i = stack.size() - 1; i >= 0; --i) {
+        if (stack[i].id == id) {
+            std::cout << "Found at position " << (stack.size() - 1 - i) << " (top = 0)\n";
+            std::cout << "Name: " << stack[i].name << ", Major: " << stack[i].major << "\n";
+            std::cout << "Press Enter...";
+            std::cin.get();
+            return;
+        }
+    }
+    std::cout << "Student ID " << id << " not found.\n";
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void bubbleSortStack(std::vector<Student>& stack) {
 
-
-
-
-
+    if (stack.empty()) return;
+    int n = stack.size();
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (stack[j].name < stack[j + 1].name) {   // Changed > to <
+                std::swap(stack[j], stack[j + 1]);
+            }
+        }
+    }
+    std::cout << "Stack sorted by name in descending order (Bubble sort).\n";
+}
+void insertionSortStack(std::vector<Student>& stack) {
+    std::vector<Student> vec = stack;
+    int n = vec.size();
+    for (int i = 1; i < n; ++i) {
+        Student key = vec[i];
+        int j = i-1;
+        while (j >= 0 && vec[j].gpa > key.gpa) {
+            vec[j+1] = vec[j];
+            --j;
+        }
+        vec[j+1] = key;
+    }
+    stack = vec;
+    std::cout << "Sorted by GPA (Insertion sort).\n";
+}
+void selectionSortStack(std::vector<Student>& stack) {
+    std::vector<Student> vec = stack;
+    int n = vec.size();
+    for (int i = 0; i < n-1; ++i) {
+        int minIdx = i;
+        for (int j = i+1; j < n; ++j)
+            if (vec[j].id < vec[minIdx].id)
+                minIdx = j;
+        std::swap(vec[i], vec[minIdx]);
+    }
+    stack = vec;
+    std::cout << "Sorted by ID (Selection sort).\n";
+}
+void merge(std::vector<Student>& arr, int left, int mid, int right) {
+    int n1 = mid - left + 1, n2 = right - mid;
+    std::vector<Student> L(n1), R(n2);
+    for (int i = 0; i < n1; ++i) L[i] = arr[left + i];
+    for (int j = 0; j < n2; ++j) R[j] = arr[mid + 1 + j];
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i].name <= R[j].name) arr[k++] = L[i++];
+        else arr[k++] = R[j++];
+    }
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}
+void mergeSort(std::vector<Student>& arr, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid+1, right);
+        merge(arr, left, mid, right);
+    }
+}
+void mergeSortStack(std::vector<Student>& stack) {
+    std::vector<Student> vec = stack;
+    mergeSort(vec, 0, vec.size()-1);
+    stack = vec;
+    std::cout << "Sorted by name (Merge sort).\n";
+}
+int partition(std::vector<Student>& arr, int low, int high) {
+    float pivot = arr[high].gpa;
+    int i = low - 1;
+    for (int j = low; j < high; ++j) {
+        if (arr[j].gpa <= pivot) {
+            ++i;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i+1], arr[high]);
+    return i+1;
+}
+void quickSort(std::vector<Student>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi-1);
+        quickSort(arr, pi+1, high);
+    }
+}
+void quickSortStack(std::vector<Student>& stack) {
+    std::vector<Student> vec = stack;
+    quickSort(vec, 0, vec.size()-1);
+    stack = vec;
+    std::cout << "Sorted by GPA (Quick sort).\n";
+}
 
 // Queue Function Implementations
-// Put Your Code Here   
-
-
-
-
+// Put Your Code Here
+bool isQueueEmpty() {
+    return queueFront == nullptr;
+}
+void queueEnqueue(std::vector<int>& ID_REGISTER) {
+    Student student;
+    student = studentInfo(student, ID_REGISTER);
+    
+    QueueNode* newNode = new QueueNode(student);
+    
+    if (isQueueEmpty()) {
+        queueFront = queueRear = newNode;
+    } else {
+        queueRear->next = newNode;
+        queueRear = newNode;
+    }
+    queueCount++;
+    
+    std::cout << "Student enqueued successfully!" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void queueDequeue(std::vector<int>& ID_REGISTER) {
+    if (isQueueEmpty()) {
+        std::cout << "Queue is empty! No records to dequeue." << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    
+    // Remove ID from register
+    for (size_t i = 0; i < ID_REGISTER.size(); i++) {
+        if (ID_REGISTER[i] == queueFront->data.id) {
+            ID_REGISTER.erase(ID_REGISTER.begin() + i);
+            break;
+        }
+    }
+    
+    QueueNode* temp = queueFront;
+    std::cout << "Dequeued student: " << temp->data.name << " (ID: " << temp->data.id << ")" << std::endl;
+    
+    queueFront = queueFront->next;
+    if (queueFront == nullptr) {
+        queueRear = nullptr;
+    }
+    delete temp;
+    queueCount--;
+    
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void queuePeek() {
+    if (isQueueEmpty()) {
+        std::cout << "Queue is empty! No records to peek." << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    
+    std::cout << "=============================" << std::endl;
+    std::cout << "Front Student Record" << std::endl;
+    std::cout << "=============================" << std::endl;
+    std::cout << "Name: " << queueFront->data.name << std::endl;
+    std::cout << "Age: " << queueFront->data.age << std::endl;
+    std::cout << "Student ID: " << queueFront->data.id << std::endl;
+    std::cout << "Major: " << queueFront->data.major << std::endl;
+    std::cout << "Registration year: " << queueFront->data.year << std::endl;
+    std::cout << "GPA: " << queueFront->data.gpa << std::endl;
+    std::cout << "=============================" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void queueDisplay() {
+    if (isQueueEmpty()) {
+        std::cout << "Queue is empty! No records to display." << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    
+    std::cout << "=============================" << std::endl;
+    std::cout << "Queue Records (Front to Rear)" << std::endl;
+    std::cout << "=============================" << std::endl;
+    
+    QueueNode* temp = queueFront;
+    int position = 1;
+    while (temp != nullptr) {
+        std::cout << "\n--- Record " << position++ << " ---" << std::endl;
+        std::cout << "Name: " << temp->data.name << std::endl;
+        std::cout << "Age: " << temp->data.age << std::endl;
+        std::cout << "Student ID: " << temp->data.id << std::endl;
+        std::cout << "Major: " << temp->data.major << std::endl;
+        std::cout << "Registration year: " << temp->data.year << std::endl;
+        std::cout << "GPA: " << temp->data.gpa << std::endl;
+        temp = temp->next;
+    }
+    std::cout << "\n=============================" << std::endl;
+    std::cout << "Total students in queue: " << queueCount << std::endl;
+    std::cout << "=============================" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void queueSort() {
+    if (isQueueEmpty() || queueFront->next == nullptr) {
+        std::cout << "Not enough elements to sort (need at least 2)." << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get();
+        return;
+    }
+    
+    // Extract all students from queue into vector
+    std::vector<Student> students;
+    QueueNode* temp = queueFront;
+    while (temp != nullptr) {
+        students.push_back(temp->data);
+        temp = temp->next;
+    }
+    
+    // Bubble sort by ID
+    for (size_t i = 0; i < students.size() - 1; i++) {
+        for (size_t j = 0; j < students.size() - i - 1; j++) {
+            if (students[j].id > students[j + 1].id) {
+                Student tempSwap = students[j];
+                students[j] = students[j + 1];
+                students[j + 1] = tempSwap;
+            }
+        }
+    }
+    
+    // Clear the queue
+    while (!isQueueEmpty()) {
+        QueueNode* del = queueFront;
+        queueFront = queueFront->next;
+        delete del;
+    }
+    queueFront = queueRear = nullptr;
+    queueCount = 0;
+    
+    // Re-enqueue sorted students
+    for (const auto& student : students) {
+        QueueNode* newNode = new QueueNode(student);
+        if (isQueueEmpty()) {
+            queueFront = queueRear = newNode;
+        } else {
+            queueRear->next = newNode;
+            queueRear = newNode;
+        }
+        queueCount++;
+    }
+    
+    std::cout << "Queue sorted by ID successfully!" << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void queueClear(std::vector<int>& ID_REGISTER) {
+    while (!isQueueEmpty()) {
+        QueueNode* temp = queueFront;
+        queueFront = queueFront->next;
+        delete temp;
+    }
+    queueFront = queueRear = nullptr;
+    queueCount = 0;
+    ID_REGISTER.clear();
+}
 
 // Tree Function Implementations
 // Put Your Code Here
