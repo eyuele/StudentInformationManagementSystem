@@ -1,6 +1,6 @@
 Below is a **`README.md`** that combines project overview, compilation instructions, and detailed team member instructions. You can paste this directly into your repository.
 
-```markdown
+
 # Student Information Management System (SIMS)
 
 A C++ console application that manages student records using multiple data structures.  
