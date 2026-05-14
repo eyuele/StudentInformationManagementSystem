@@ -14,7 +14,7 @@
  *    - Each data structure must maintain its own ID_REGISTER vector (see main()).
  * 
  * 2. ID_REGISTER Vectors:
- *    - $In main()$, separate vectors are created for each data structure:
+ *    - In main(), separate vectors are created for each data structure:
  *        SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER.
  *    - These vectors are passed by reference to every menu function and every insert/delete function.
  *    - Use them to prevent duplicate IDs within your data structure.
