@@ -1,64 +1,3 @@
-/* 
- * Student Information Management System
- * =====================================
- * 
- * IMPORTANT UPDATES FOR TEAM MEMBERS (READ THIS FIRST)
- * ----------------------------------------------------
- * 
- * 1. Student Input Function - studentInfo() has been CHANGED:
- *    - Signature: Student studentInfo(Student& student, std::vector<int>& ID_REGISTER)
- *    - It now receives a vector reference to store used IDs (no global ID counter).
- *    - IDs are entered MANUALLY by the user, not auto-generated.
- *    - Each data structure must maintain its own ID_REGISTER vector (see main()).
- * 
- * 2. ID_REGISTER Vectors:
- *    - In main(), separate vectors are created for each data structure:
- *        SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER.
- *    - These vectors are passed by reference to every menu function and every insert/delete function.
- *    - Use them to prevent duplicate IDs within your data structure.
- * 
- * 3. Sorting Requirement:
- *    - All data structures must implement sorting by ID.
- *    - For linked lists, simply swap the Student data inside nodes (not the pointers).
- *    - For stack/queue, pop/dequeue all elements into a vector, sort, then push/enqueue back.
- *    - For tree, inorder traversal already gives sorted order if inserted by ID.
- * 
- * 4. I/O Handling Pattern:
- *    - After every `std::cin >> variable;`, use:
- *        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
- *    - This clears the newline and prevents getline/cin.get() issues.
- *    - Always check for `std::cin.fail()` after input and clear the stream.
- * 
- * 5. Major Filter (in Dllist_Display) is case‑insensitive:
- *    - It converts both user input and stored major to lowercase using tolower().
- *    - Include <cctype> and use tolower() if you implement similar filters.
- * 
- * 6. Doubly Linked List (already implemented):
- *    - Full insert, delete, search, display, and sort menu (sorting algorithms are empty stubs).
- *    - Review Dllist_insert, Dllist_delete, etc. to see the required pattern.
- * 
- * 7. Your Tasks (implement the following with the same interface style):
- *    - Singly Linked List:   functions in slinkedlistMenu() (currently placeholders)
- *    - Stack:                functions in stackMenu()
- *    - Queue:                functions in queueMenu()
- *    - Tree:                 functions in treeMenu()
- * 
- *    Each must accept the ID_REGISTER vector by reference and use it.
- * 
- * 8. Compilation:
- *    - Use C++11 or later.
- *    - All required headers are already included.
- * 
- * ------------------------------------------------------------
- * Original Project Requirements (from instructor)
- * ------------------------------------------------------------
- * - After completing your part, add brief documentation of function variables.
- * - Implement sorting.
- * - Student info insertion function implementation is on line 463-573 (may have moved, search for studentInfo).
- */
-
-
-
 #pragma once
 #if defined(_WIN32) || defined(_WIN64)
     #define CLEAR_COMMAND "cls"
@@ -93,15 +32,24 @@ struct Student {
     std::string name = "";
     std::string major = "";
 };
+// Doubly Linked List Data Structure
 struct Dllist_Node {
     Student data;
     Dllist_Node* next;
     Dllist_Node* prev;
 };
+// Tree Data Structure
+struct Tree_Node {
+    Student data;
+    Tree_Node* left;
+    Tree_Node* right;
+};
 
 
 // Student Info Insert Function Decalaration 
 Student studentInfo(Student& student, std::vector <int>& ID_REGISTER);
+
+
 
 // Doubly Linked List Funcition Declaration
 Dllist_Node* createNode(const Student& student);
@@ -113,7 +61,7 @@ void Dllist_Sort(Dllist_Node* &head);
     void BubbleSort(Dllist_Node* head);
     void SelectionSort(Dllist_Node* head);
     void InsertionSort(Dllist_Node* head);
-void Dllist_clear(Dllist_Node* &head);
+void Dllist_clear(Dllist_Node* &head, std::vector <int>& ID_REGISTER);
 // Single Linked List Function Declaration
 // Put Your Code Here
 
@@ -137,9 +85,15 @@ void Dllist_clear(Dllist_Node* &head);
 
 // Tree Function Declaration
 // Put Your Code Here
-
-
-
+Tree_Node* CreateTree(Student &student);
+Tree_Node* deleteRec(Tree_Node* node, int id, std::vector<int>& ID_REGISTER);
+void Tree_Insert(Tree_Node* &head, std::vector <int>& ID_REGISTER);
+void Tree_Delete(Tree_Node* &head, std::vector <int>& ID_REGISTER);
+void Tree_Search(Tree_Node* head);
+void inorderRec(Tree_Node* node);
+void Tree_Traverse(Tree_Node* head);
+void clearRec(Tree_Node* node);
+void Tree_Clear(Tree_Node* &head, std::vector <int>& ID_REGISTER);
 
 
 
@@ -149,8 +103,8 @@ void slinkedlistMenu(std::vector <int>& ID_REGISTER);
 void DlinkedlistMenu(Dllist_Node* &head, std::vector <int>& ID_REGISTER);
 void stackMenu(std::vector <int>& ID_REGISTER);
 void queueMenu(std::vector <int>& ID_REGISTER);
-void treeMenu(std::vector <int>& ID_REGISTER);
-void mainMenu(Dllist_Node* &Dllist_head, std::vector <int>& SLLIST_ID_REGISTER,
+void treeMenu(Tree_Node* &Tlist_head, std::vector <int>& ID_REGISTER);
+void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tlist_head, std::vector <int>& SLLIST_ID_REGISTER,
             std::vector <int>& DLLIST_ID_REGISTER, std::vector <int>& STACK_ID_REGISTER,
             std::vector <int>& QUEUE_ID_REGISTER, std::vector <int>& TREE_ID_REGISTER);
 
@@ -159,12 +113,14 @@ void mainMenu(Dllist_Node* &Dllist_head, std::vector <int>& SLLIST_ID_REGISTER,
 
 int main() {
     Dllist_Node* Dllist_head = nullptr;
+    Tree_Node* Tree_head = nullptr;
     std::vector <int> SLLIST_ID_REGISTER;
     std::vector <int> DLLIST_ID_REGISTER;
     std::vector <int> STACK_ID_REGISTER;
     std::vector <int> QUEUE_ID_REGISTER;
     std::vector <int> TREE_ID_REGISTER;
-    mainMenu(Dllist_head, SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER);
+    
+    mainMenu(Dllist_head, Tree_head, SLLIST_ID_REGISTER, DLLIST_ID_REGISTER, STACK_ID_REGISTER, QUEUE_ID_REGISTER, TREE_ID_REGISTER);
     return 0;
 }
 
@@ -231,6 +187,7 @@ void slinkedlistMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "4. Display All Records" << std::endl;\
         std::cout << "5. Sort Records by ID" << std::endl;
         std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
@@ -279,6 +236,7 @@ void stackMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "4. Display All Records" << std::endl;
         std::cout << "5. Sort Records by ID" << std::endl;
         std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
@@ -314,7 +272,7 @@ void stackMenu(std::vector <int>& ID_REGISTER) {
         
     }
 }
-void treeMenu(std::vector <int>& ID_REGISTER) {
+void treeMenu(Tree_Node* &Tree_head, std::vector <int>& ID_REGISTER) {
     while (true){
         system(CLEAR_COMMAND);
         std::cout <<"----------------------------------------" << std::endl;
@@ -323,9 +281,9 @@ void treeMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "1. Insert Student Record" << std::endl;
         std::cout << "2. Delete Student Record" << std::endl;
         std::cout << "3. Search Student Record" << std::endl;
-        std::cout << "4. Traverse Tree(Inorder/Preorder/Postorder)" << std::endl;
-        std::cout << "5. Sort Records by ID" << std::endl;
-        std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "4. Traverse Tree(Inorder)" << std::endl;
+        std::cout << "5. Return to Main Menu" << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
@@ -338,21 +296,18 @@ void treeMenu(std::vector <int>& ID_REGISTER) {
         }
         switch (choice) {
             case 1:
-                std::cout << "You selected Insert Student Record." << std::endl;
+                Tree_Insert(Tree_head, ID_REGISTER);
                 break;
             case 2:
-                std::cout << "You selected Delete Student Record." << std::endl;
+                Tree_Delete(Tree_head, ID_REGISTER);
                 break;
             case 3:
-                std::cout << "You selected Search Student Record." << std::endl;
+                Tree_Search(Tree_head); 
                 break;
             case 4:
-                std::cout << "You selected Traverse Tree." << std::endl;
+                Tree_Traverse(Tree_head);
                 break;
             case 5:
-                std::cout << "You selected Sort Records by ID." << std::endl;
-                break;
-            case 6:
                 std::cout << "Returning to Main Menu." << std::endl;
                 return;
             default:
@@ -372,6 +327,7 @@ void queueMenu(std::vector <int>& ID_REGISTER) {
         std::cout << "4. Display All Records" << std::endl;
         std::cout << "5. Sort Records by ID" << std::endl;
         std::cout << "6. Return to Main Menu" << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
@@ -407,7 +363,7 @@ void queueMenu(std::vector <int>& ID_REGISTER) {
         
     }
 }
-void mainMenu(Dllist_Node* &Dllist_head, std::vector <int>& SLLIST_ID_REGISTER,
+void mainMenu(Dllist_Node* &Dllist_head, Tree_Node* &Tree_head, std::vector <int>& SLLIST_ID_REGISTER,
             std::vector <int>& DLLIST_ID_REGISTER, std::vector <int>& STACK_ID_REGISTER,
             std::vector <int>& QUEUE_ID_REGISTER, std::vector <int>& TREE_ID_REGISTER) {
     while (true) {
@@ -420,6 +376,7 @@ void mainMenu(Dllist_Node* &Dllist_head, std::vector <int>& SLLIST_ID_REGISTER,
         std::cout << "4. Queue" << std::endl;
         std::cout << "5. Tree" << std::endl;
         std::cout << "6. Exit Program" << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
         std::cout << "Enter your choice: ";
         int choice;
         std::cin >> choice;
@@ -447,11 +404,12 @@ void mainMenu(Dllist_Node* &Dllist_head, std::vector <int>& SLLIST_ID_REGISTER,
                 queueMenu(QUEUE_ID_REGISTER);
                 break;
             case 5:
-                treeMenu(TREE_ID_REGISTER);
+                treeMenu(Tree_head, TREE_ID_REGISTER);
                 break;
             case 6:
                 std::cout << "Exiting program. Goodbye!" << std::endl;
-                Dllist_clear(Dllist_head);
+                Dllist_clear(Dllist_head, DLLIST_ID_REGISTER);
+                Tree_Clear(Tree_head, TREE_ID_REGISTER);
                 exit(0);
                 break;
             default:
@@ -506,7 +464,7 @@ Student studentInfo(Student& student, std::vector <int>& ID_REGISTER) {
             }
             if (std::cin.fail()){
                 std::cin.clear();
-                std::cin.ignore();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Please Enter A Valid ID!" << std::endl;
                 continue;
             }
@@ -515,7 +473,6 @@ Student studentInfo(Student& student, std::vector <int>& ID_REGISTER) {
             }
             else {
                 student.id = id;
-                ID_REGISTER.push_back(id);
                 std::cout << student.id << std::endl;
                 break;
             }
@@ -588,20 +545,22 @@ void Dllist_insert(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
     Dllist_Node* n = createNode(student);
     if (head == nullptr) {
         head = n;
+        ID_REGISTER.push_back(head->data.id);
     }
     else {
         Dllist_Node* temp = head;
         while (temp->next != nullptr) {
             temp = temp->next;
+            
         }
         temp->next = n;
         n->prev = temp;
+        ID_REGISTER.push_back(temp->next->data.id);
         
     }
 }
 void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
     int id;
-    bool IsEXistes = false;
     while (true) {
         std::cout << "----------------------" << std::endl;
         std::cout << "Delete Student Record" << std::endl;
@@ -625,16 +584,6 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
         std::cin.get(); 
         return;
     }
-    for (int i = 0; i < ID_REGISTER.size(); i++){
-        if (ID_REGISTER[i] == id ) {
-            ID_REGISTER.erase(ID_REGISTER.begin() + i);
-            IsEXistes = true;
-        }
-    }
-    if (IsEXistes == false) {
-        std::cout << "Student under this ID dosent exist" << std::endl;
-        return;
-    }
     while (temp != nullptr) {
         if (temp -> data.id == id) {
             if (temp -> prev != nullptr && temp -> next != nullptr) {
@@ -642,6 +591,11 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
                 temp -> next -> prev = temp -> prev;
                 delete temp;
                 std::cout << "Student record with ID " << id << " deleted successfully." << std::endl;
+                for (int i = 0; i < ID_REGISTER.size(); i++){
+                    if (ID_REGISTER[i] == id ) {
+                        ID_REGISTER.erase(ID_REGISTER.begin() + i);
+                    }
+                }
                 std::cout << "Press Enter to continue...";
                 std::cin.get(); 
                 return;
@@ -651,6 +605,11 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
                 head -> prev = nullptr;
                 delete temp;
                 std::cout << "Student record with ID " << id << " deleted successfully." << std::endl;
+                for (int i = 0; i < ID_REGISTER.size(); i++){
+                    if (ID_REGISTER[i] == id ) {
+                        ID_REGISTER.erase(ID_REGISTER.begin() + i);
+                    }
+                }
                 std::cout << "Press Enter to continue...";
                 std::cin.get(); 
                 return;
@@ -659,6 +618,11 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
                 temp -> prev -> next = nullptr;
                 delete temp;
                 std::cout << "Student record with ID " << id << " deleted successfully." << std::endl;
+                for (int i = 0; i < ID_REGISTER.size(); i++){
+                    if (ID_REGISTER[i] == id ) {
+                        ID_REGISTER.erase(ID_REGISTER.begin() + i);
+                    }
+                }
                 std::cout << "Press Enter to continue...";
                 std::cin.get(); 
                 return;
@@ -667,6 +631,11 @@ void Dllist_delete(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
                 head = nullptr;
                 delete temp;
                 std::cout << "Student record with ID " << id << " deleted successfully." << std::endl;
+                for (int i = 0; i < ID_REGISTER.size(); i++){
+                    if (ID_REGISTER[i] == id ) {
+                        ID_REGISTER.erase(ID_REGISTER.begin() + i);
+                    }
+                }
                 std::cout << "Press Enter to continue...";
                 std::cin.get(); 
                 return;
@@ -708,8 +677,9 @@ void Dllist_Search(Dllist_Node* head) {
     }
     while (temp != nullptr){
         if (temp->data.id == id) {
+            std::cout << "Found:" << std::endl;
             std::cout << "-----------------------------" << std::endl;
-            std::cout << "Display Student Records" << std::endl;
+            std::cout << "Student Records" << std::endl;
             std::cout << "-----------------------------" << std::endl;
             std::cout << "Name: " << temp->data.name << std::endl;
             std::cout << "Age: " << temp->data.age << std::endl;
@@ -752,6 +722,8 @@ void Dllist_Display(Dllist_Node* head) {
         case 1:{
             std::cout << "Displaying all student records:" << std::endl;
             while ( temp != nullptr) {
+                std::cout << "-----------------------------" << std::endl;
+                std::cout << "Student Information" << std::endl;
                 std::cout << "-----------------------------" << std::endl;
                 std::cout << "Name: " << temp->data.name << std::endl;
                 std::cout << "Age: " << temp->data.age << std::endl;
@@ -894,7 +866,7 @@ void Dllist_Sort(Dllist_Node* &head) {
         std::cout << "Insertion Sort completed!\n";
     }
     
-void Dllist_clear(Dllist_Node* &head) {
+void Dllist_clear(Dllist_Node* &head, std::vector <int>& ID_REGISTER) {
     while (head != nullptr) {
         Dllist_Node* temp = head;
         head = head->next;
@@ -929,3 +901,183 @@ void Dllist_clear(Dllist_Node* &head) {
 
 // Tree Function Implementations
 // Put Your Code Here
+Tree_Node* CreateTree(Student &student){
+    Tree_Node* newNode = new Tree_Node();
+    newNode -> data = student;
+    newNode -> left = nullptr;
+    newNode -> right = nullptr;
+    return newNode;
+}
+Tree_Node* deleteRec(Tree_Node* node, int id, std::vector<int>& ID_REGISTER) {
+    if (node == nullptr) return nullptr;
+    if (id < node->data.id)
+        node->left = deleteRec(node->left, id, ID_REGISTER);
+    else if (id > node->data.id)
+        node->right = deleteRec(node->right, id, ID_REGISTER);
+    else {
+        // Found the node to delete
+        // Remove ID from register
+        for (int i = 0; i < ID_REGISTER.size(); i++) {
+            if (ID_REGISTER[i] == id) {
+                ID_REGISTER.erase(ID_REGISTER.begin() + i);
+                break;
+            }
+        }  
+        if (node->left == nullptr && node->right == nullptr) {
+            delete node;
+            return nullptr;
+        }
+        else if (node->left == nullptr) {
+            Tree_Node* temp = node->right;
+            delete node;
+            return temp;
+        }
+        else if (node->right == nullptr) {
+            Tree_Node* temp = node->left;
+            delete node;
+            return temp;
+        }
+        else {
+            Tree_Node* successor = node->right;
+            while (successor->left != nullptr)
+                successor = successor->left;
+            node->data = successor->data;
+            node->right = deleteRec(node->right, successor->data.id, ID_REGISTER);
+        }
+    }
+    return node;
+}
+void Tree_Insert(Tree_Node* &head, std::vector <int>& ID_REGISTER){
+    Student student;
+    student = studentInfo(student, ID_REGISTER);
+    Tree_Node* Node = CreateTree(student);
+    if (head == nullptr){
+        head = Node;
+        ID_REGISTER.push_back(head->data.id);
+    }
+    else{
+        Tree_Node* temp = head;
+        while (temp != nullptr){
+            if (Node->data.id < temp->data.id){
+                if(temp->left == nullptr){
+                    temp->left = Node;
+                    ID_REGISTER.push_back(temp->left->data.id);
+                    break;
+                }
+                else {
+                    temp = temp->left;
+                }
+            }
+            else {
+                if(temp->right == nullptr){
+                    temp->right = Node;
+                    ID_REGISTER.push_back(temp->right->data.id);
+                    break;
+                }
+                else {
+                    temp = temp->right;
+                }
+            }
+        }
+    }
+}
+void Tree_Delete(Tree_Node* &head, std::vector <int>& ID_REGISTER){
+    int id;
+    while (true) {
+        std::cout << "----------------------" << std::endl;
+        std::cout << "Delete Student Record" << std::endl;
+        std::cout << "----------------------" << std::endl;
+        std::cout << "Enter Student ID to delete: ";   
+        std::cin >> id;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (std::cin.fail() || id <= 1000) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a valid Student ID." << std::endl;
+            continue;
+        }
+        break;
+    }
+    if (head == nullptr) {
+        std::cout << "No student records found." << std::endl;
+        std::cout << "Press Enter to continue...";
+        std::cin.get(); 
+        return;
+    }   
+    head = deleteRec(head, id, ID_REGISTER);
+}
+void Tree_Search(Tree_Node* head) {
+    if (head == nullptr) {
+        std::cout << "Tree is empty.\n";
+        std::cin.get(); return;
+    }
+    int id;
+    std::cout << "Enter ID to search: ";
+    std::cin >> id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
+    Tree_Node* temp = head;
+    while (temp) {
+        if (id < temp->data.id)
+            temp = temp->left;
+        else if (id > temp->data.id)
+            temp = temp->right;
+        else {
+            // Found
+            std::cout << "Found:\n";
+            std::cout << "-----------------------------" << std::endl;
+            std::cout << "Student Information" << std::endl;
+            std::cout << "-----------------------------" << std::endl;
+            std::cout << "Name: " << temp->data.name << std::endl;
+            std::cout << "Age: " << temp->data.age << std::endl;
+            std::cout << "Student ID: " << std::to_string(temp->data.id) << std::endl;
+            std::cout << "Major: " << temp->data.major << std::endl;
+            std::cout << "Registration year: " << temp->data.year << std::endl;
+            std::cout << "GPA: " << temp->data.gpa << std::endl;
+
+            std::cout << "Press Enter to continue...";
+            std::cin.get(); 
+            return;
+        }
+    }
+    std::cout << "No Student Records Under That Is Was found." << std::endl;
+    std::cout << "Press Enter to continue...";
+    std::cin.get();
+}
+void inorderRec(Tree_Node* node) {
+    if (node == nullptr) return;
+    inorderRec(node->left);
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Student Information" << std::endl;
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "Name: " << node->data.name << std::endl;
+    std::cout << "Age: " << node->data.age << std::endl;
+    std::cout << "Student ID: " << node->data.id << std::endl;
+    std::cout << "Major: " << node->data.major << std::endl;
+    std::cout << "Registration year: " << node->data.year << std::endl;
+    std::cout << "GPA: " << node->data.gpa << std::endl;
+
+    inorderRec(node->right);
+}
+void Tree_Traverse(Tree_Node* head) {
+    if (head == nullptr) {
+        std::cout << "Tree is empty.\n";
+    } else {
+        std::cout << "Students sorted by ID:\n";
+        inorderRec(head);
+    }
+    std::cout << "Press Enter...";
+    std::cin.get();
+}
+void Tree_Clear(Tree_Node* &head, std::vector<int>& ID_REGISTER) {
+    clearRec(head);
+    head = nullptr;
+    ID_REGISTER.clear();
+    std::cout << "Tree cleared.\n";
+}
+void clearRec(Tree_Node* node) {
+    if (node == nullptr) return;
+    clearRec(node->left);
+    clearRec(node->right);
+    delete node;
+}
